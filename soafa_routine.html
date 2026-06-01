@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SOAFA Routine</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Bebas Neue, Syne, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            bebas: ['"Bebas Neue"', 'sans-serif'],
+            syne: ['Syne', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* DESIGN SYSTEM CUSTOM PROPERTIES */
+    :root {
+      --bg: #08090b;
+      --bg2: #0d0f12;
+      --card: #131720;
+      --card-hover: #181d26;
+      --border: #1e2430;
+      --border2: #262d3a;
+
+      /* Metallic silver palette */
+      --silver-100: #e8eaed;
+      --silver-200: #c0c8d4;
+      --silver-300: #8a95a3;
+      --silver-400: #545e6b;
+      --silver-500: #2e3540;
+
+      /* Category borders */
+      --cat-morning: #e07340;
+      --cat-study: #5b7fe8;
+      --cat-food: #3d9e5f;
+      --cat-activity: #c94040;
+      --cat-wind: #7a5cc4;
+      --cat-sleep: #3a4455;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--silver-100);
+      font-family: 'Syne', sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Noise Texture Overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 998;
+      opacity: 0.028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 200px;
+    }
+
+    /* Metallic Finish Implementation */
+    .card {
+      background: linear-gradient(
+        160deg,
+        rgba(255, 255, 255, 0.035) 0%,
+        rgba(255, 255, 255, 0.01) 40%,
+        rgba(0, 0, 0, 0.1) 100%
+      ), #131720;
+      border: 1px solid var(--border);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+        0 2px 8px rgba(0, 0, 0, 0.4);
+      border-radius: 6px;
+      transition: border-color 0.25s ease, background-color 0.25s ease, transform 0.2s ease;
+    }
+
+    .card:hover {
+      background-color: var(--card-hover);
+    }
+
+    /* Active Task Glow Effect */
+    .task-active {
+      transform: scale(1.025);
+      border-color: rgba(192, 200, 212, 0.5) !important;
+      box-shadow: 
+        0 0 0 1px rgba(192, 200, 212, 0.2),
+        0 0 20px rgba(192, 200, 212, 0.12),
+        0 0 40px rgba(192, 200, 212, 0.05),
+        inset 0 0 12px rgba(192, 200, 212, 0.04);
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { 
+        box-shadow: 0 0 20px rgba(192, 200, 212, 0.12), inset 0 0 12px rgba(192, 200, 212, 0.04); 
+      }
+      50% { 
+        box-shadow: 0 0 32px rgba(192, 200, 212, 0.22), inset 0 0 18px rgba(192, 200, 212, 0.08); 
+      }
+    }
+
+    /* Header text styling & gradient */
+    .brand-gradient {
+      background: linear-gradient(135deg, #d0d5de 0%, #7a8494 50%, #c4cad4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Checkbox Ripple & Interactive Animations */
+    .custom-checkbox {
+      width: 18px;
+      height: 18px;
+      border: 1px solid var(--silver-400);
+      background: transparent;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .custom-checkbox.checked {
+      background: var(--silver-200);
+      border-color: var(--silver-100);
+      transform: scale(1.15);
+      animation: check-ripple 0.4s ease-out;
+    }
+
+    .custom-checkbox.checked::after {
+      content: '✓';
+      color: #08090b;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    @keyframes check-ripple {
+      0% {
+        box-shadow: 0 0 0 0px rgba(192, 200, 212, 0.5);
+      }
+      100% {
+        box-shadow: 0 0 0 8px rgba(192, 200, 212, 0);
+      }
+    }
+
+    /* Scanline overlay animation for Workout Modal */
+    .scanline-container {
+      position: relative;
+      overflow: hidden;
+    }
+    .scanline-container::before {
+      content: " ";
+      display: block;
+      position: absolute;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+      z-index: 10;
+      background-size: 100% 3px, 6px 100%;
+      pointer-events: none;
+    }
+
+    .scanline-pulse {
+      position: relative;
+    }
+    .scanline-pulse::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: rgba(192, 200, 212, 0.3);
+      top: 0;
+      left: 0;
+      animation: scanline-move 2.5s linear infinite;
+      z-index: 15;
+    }
+    @keyframes scanline-move {
+      0% { top: 0%; }
+      100% { top: 100%; }
+    }
+
+    /* Typography Letter Spacings */
+    .bebas-spaced {
+      letter-spacing: 0.1em;
+    }
+    .syne-task {
+      font-size: 13px;
+      letter-spacing: 0.02em;
+    }
+    .mono-time {
+      font-size: 10px;
+    }
+    .section-label {
+      font-size: 9px;
+      letter-spacing: 0.25em;
+    }
+
+    /* Scrollbar Style */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border2);
+      border-radius: 2px;
+    }
+
+    /* Modal Animation */
+    .modal-enter {
+      opacity: 0;
+      transform: scale(0.95) translateY(10px);
+    }
+    .modal-active {
+      transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    /* Hide element natively without layout shift */
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body class="safe-bottom pb-24 min-h-screen selection:bg-slate-700">
+
+  <!-- Day Complete Unlock Splash Overlay -->
+  <div id="achievement-overlay" class="fixed inset-0 bg-[#08090b]/90 z-[999] flex flex-col items-center justify-center opacity-0 pointer-events-none transition-opacity duration-500">
+    <div class="text-center transform scale-75 transition-transform duration-500" id="achievement-box">
+      <div class="text-[var(--silver-300)] font-mono text-xs tracking-[0.4em] uppercase mb-2">// SEQUENCE ACQUIRED</div>
+      <h1 class="font-bebas text-6xl md:text-8xl tracking-widest text-[#e8eaed] drop-shadow-[0_0_25px_rgba(232,234,237,0.4)]">DAY COMPLETE</h1>
+      <p class="font-mono text-[var(--silver-400)] text-xs mt-4 tracking-wider">ALL OBJECTIVES SECURED. ELITE EFFICIENCY STATUS.</p>
+    </div>
+  </div>
+
+  <!-- STICKY HEADER -->
+  <header class="sticky top-0 z-50 bg-[#08090b]/88 backdrop-blur-[20px] border-bottom border-[1px] border-[var(--border)] px-4 py-3">
+    <div class="max-w-md mx-auto flex flex-col gap-2">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-1">
+          <span class="font-bebas text-3xl tracking-wider brand-gradient">SOAFA</span>
+          <span class="font-bebas text-xs tracking-widest bg-[var(--border2)] text-[var(--silver-300)] px-2 py-0.5 rounded ml-2 border border-[var(--border)]">v2.5</span>
+        </div>
+        
+        <!-- Today Indicator and Global Edit toggle -->
+        <div class="flex items-center gap-3">
+          <div class="text-right">
+            <div id="header-day-name" class="font-bebas text-xl text-[var(--silver-200)] tracking-wider">MONDAY</div>
+            <div id="header-full-date" class="font-mono text-[10px] text-[var(--silver-400)] tracking-tighter">01.06.2026</div>
+          </div>
+          <button id="edit-mode-btn" class="p-1.5 rounded border border-[var(--border)] bg-[#131720]/50 hover:bg-[var(--border2)] transition-all text-[var(--silver-300)] hover:text-[var(--silver-100)]" title="Edit Routine Mode">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Progress Row -->
+      <div class="flex flex-col gap-1 mt-1">
+        <div class="flex justify-between items-center text-[var(--silver-300)] font-mono text-[10px]">
+          <span class="tracking-wide uppercase">// MISSION PROGRESSION</span>
+          <span id="live-progress-text" class="text-[var(--silver-200)] font-semibold">0/23 SECURED (0%)</span>
+        </div>
+        <div class="w-full h-1 bg-[var(--border)] rounded-full overflow-hidden">
+          <div id="live-progress-fill" class="h-full bg-gradient-to-r from-[var(--silver-400)] to-[var(--silver-100)] w-0 transition-all duration-500 ease-out"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-md mx-auto px-4 pt-4">
+
+    <!-- ============================================= -->
+    <!-- TAB 1: DAILY ROUTINE -->
+    <!-- ============================================= -->
+    <section id="tab-routine" class="tab-content active space-y-6">
+      
+      <!-- Timeline Header label -->
+      <div class="flex justify-between items-center border-b border-[var(--border)] pb-2 mb-4">
+        <span class="section-label font-mono text-[var(--silver-400)] uppercase">// TIMELINE PROTOCOLS</span>
+        <span id="current-time-log" class="font-mono text-[10px] text-[var(--silver-300)] bg-[var(--border2)] px-2 py-0.5 rounded">SYSTEM: ACTIVE</span>
+      </div>
+
+      <!-- Scroll container for task cards connected by timeline -->
+      <div class="relative pl-5 border-l border-[var(--silver-500)] ml-2.5 space-y-3" id="routine-list-container">
+        <!-- Javascript renders tasks here -->
+      </div>
+    </section>
+
+
+    <!-- ============================================= -->
+    <!-- TAB 2: STATS & TRACKER -->
+    <!-- ============================================= -->
+    <section id="tab-stats" class="tab-content space-y-6">
+      
+      <!-- STREAK METRICS -->
+      <div class="border-b border-[var(--border)] pb-2">
+        <span class="section-label font-mono text-[var(--silver-400)] uppercase">// PERFORMANCE MATRIX</span>
+      </div>
+
+      <!-- Streak Spotlight Card -->
+      <div class="card p-5 relative overflow-hidden flex flex-col items-center justify-center text-center">
+        <!-- Glow Spotlight effect behind number -->
+        <div class="absolute w-44 h-44 bg-gradient-to-r from-[rgba(192,200,212,0.06)] to-transparent rounded-full filter blur-xl -translate-y-4"></div>
+        
+        <span class="font-mono text-[10px] text-[var(--silver-300)] tracking-widest uppercase mb-1 z-10">// ACTIVE CONSECUTIVE RUN</span>
+        <div id="stats-streak-val" class="font-bebas text-6xl text-[var(--silver-200)] tracking-wider drop-shadow-md z-10">0 DAYS</div>
+        <p class="font-mono text-[10px] text-[var(--silver-400)] mt-1 max-w-[280px] z-10 leading-relaxed">Maintained by completing &ge; 80% (19+ tasks) of Daily Protocol items daily.</p>
+        
+        <div class="mt-4 grid grid-cols-2 gap-4 w-full border-t border-[var(--border)] pt-4 z-10">
+          <div>
+            <span class="font-mono text-[9px] text-[var(--silver-400)] uppercase">ALL-TIME PEAK</span>
+            <div id="stats-best-streak" class="font-bebas text-2xl text-[var(--silver-200)]">0 DAYS</div>
+          </div>
+          <div>
+            <span class="font-mono text-[9px] text-[var(--silver-400)] uppercase">TODAY'S MARK</span>
+            <div id="stats-today-percentage" class="font-bebas text-2xl text-[var(--silver-200)]">0%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Last 7 Days Overview -->
+      <div class="card p-4">
+        <div class="flex justify-between items-center mb-3">
+          <span class="font-mono text-[10px] text-[var(--silver-300)] uppercase">// COMPLIANCE HISTORY (7D)</span>
+          <span class="font-mono text-[9px] text-[var(--silver-400)]">GOAL: &ge;80%</span>
+        </div>
+        <div class="grid grid-cols-7 gap-2" id="streak-week-chips">
+          <!-- Dynamically generated 7 chips -->
+        </div>
+      </div>
+
+      <!-- Counts Tracker -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="card p-4 flex flex-col justify-between">
+          <span class="font-mono text-[9px] text-[var(--silver-400)] uppercase">COMPLETED SECURED</span>
+          <div>
+            <span id="stats-complete-count" class="font-bebas text-4xl text-[var(--silver-200)]">0</span>
+            <span class="font-mono text-xs text-[var(--silver-400)]">/ 23 Today</span>
+          </div>
+        </div>
+        <div class="card p-4 flex flex-col justify-between">
+          <span class="font-mono text-[9px] text-[var(--silver-400)] uppercase">TRAINING SESSIONS</span>
+          <div>
+            <span id="stats-workout-count" class="font-bebas text-4xl text-[var(--silver-200)]">0</span>
+            <span class="font-mono text-xs text-[var(--silver-400)]">/ 5 This Wk</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BAD HABIT TRACKER -->
+      <div class="border-b border-[var(--border)] pb-2 pt-2">
+        <span class="section-label font-mono text-[var(--silver-400)] uppercase">// PROTOCOL AVOIDANCE TRACKER</span>
+      </div>
+
+      <div class="card p-4 space-y-4">
+        <!-- Mini habit addition form -->
+        <form id="add-habit-form" class="flex gap-2">
+          <input type="text" id="new-habit-input" required placeholder="Add targeted code-breaker (e.g. Doomscrolling)" 
+                 class="flex-1 bg-[#0d0f12] border border-[var(--border)] rounded px-3 py-2 text-xs font-mono text-[var(--silver-200)] focus:outline-none focus:border-[var(--silver-300)] placeholder:text-[var(--silver-400)]">
+          <button type="submit" class="bg-[var(--silver-300)] hover:bg-[var(--silver-200)] text-[#08090b] font-bebas text-md tracking-wider px-4 rounded max-h-[34px] transition-all">ADD</button>
+        </form>
+
+        <div class="flex justify-between items-center text-[var(--silver-300)] font-mono text-[9px] tracking-wide border-b border-[var(--border2)] pb-2">
+          <span>TARGETED FOR AVOIDANCE</span>
+          <span id="avoided-habits-score">SCORE: 0/0 SHIELDED</span>
+        </div>
+
+        <!-- Bad habits listing -->
+        <div id="bad-habits-container" class="space-y-2">
+          <!-- Render bad habits here -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM NAVIGATION -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-[#08090b]/95 backdrop-blur-[20px] border-t border-[var(--border)] pb-safe">
+    <div class="max-w-md mx-auto grid grid-cols-2 text-center h-16">
+      
+      <!-- Routine Tab -->
+      <button id="nav-btn-routine" class="flex flex-col items-center justify-center gap-1 transition-all group border-r border-[var(--border)]/30 active:scale-95">
+        <span class="font-bebas text-lg tracking-wider text-[var(--silver-200)] relative py-1">
+          ROUTINE
+          <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[var(--silver-200)] transition-all" id="nav-indicator-routine"></span>
+        </span>
+        <span class="font-mono text-[8px] text-[var(--silver-300)] tracking-widest uppercase opacity-70 group-hover:opacity-100">// LOG PROTOCOL</span>
+      </button>
+
+      <!-- Stats Tab -->
+      <button id="nav-btn-stats" class="flex flex-col items-center justify-center gap-1 transition-all group active:scale-95">
+        <span class="font-bebas text-lg tracking-wider text-[var(--silver-400)] relative py-1">
+          STATS
+          <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-[var(--silver-200)] transition-all" id="nav-indicator-stats"></span>
+        </span>
+        <span class="font-mono text-[8px] text-[var(--silver-400)] tracking-widest uppercase opacity-70 group-hover:opacity-100">// METRIC ENGINE</span>
+      </button>
+
+    </div>
+  </nav>
+
+  <!-- FULL SCREEN WORKOUT MODAL -->
+  <div id="workout-modal" class="fixed inset-0 z-50 bg-[#08090b] hidden flex-col safe-top overflow-y-auto">
+    <div class="max-w-md mx-auto w-full flex-1 flex flex-col p-4 scanline-container">
+      
+      <!-- Top header layout -->
+      <div class="flex items-center justify-between border-b border-[var(--border)] pb-3 mb-4 mt-2">
+        <div class="flex flex-col">
+          <span class="font-mono text-[9px] tracking-widest text-[var(--silver-400)] uppercase">// KINETIC PROTOCOL ACTIVATE</span>
+          <h2 id="workout-modal-title" class="font-bebas text-3xl text-[var(--silver-100)] tracking-widest scanline-pulse">PUSH DAY WORKOUT</h2>
+        </div>
+        <button id="close-workout-btn" class="border border-[var(--border)] hover:bg-[var(--border2)] text-[var(--silver-200)] rounded px-3 py-1 font-mono text-xs transition-all uppercase tracking-wider">
+          ESC
+        </button>
+      </div>
+
+      <!-- Routine schedule bar helper -->
+      <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-mono border-b border-[var(--border)] pb-3 mb-4 bg-[#131720]/30 p-2 rounded">
+        <div><span class="text-[var(--silver-400)] block">M</span><span id="sch-mon" class="font-bold">PSH</span></div>
+        <div><span class="text-[var(--silver-400)] block">T</span><span id="sch-tue" class="font-bold">PLL</span></div>
+        <div><span class="text-[var(--silver-400)] block">W</span><span id="sch-wed" class="font-bold">LEG</span></div>
+        <div><span class="text-[var(--silver-400)] block">T</span><span id="sch-thu" class="font-bold">RST</span></div>
+        <div><span class="text-[var(--silver-400)] block">F</span><span id="sch-fri" class="font-bold">PSH</span></div>
+        <div><span class="text-[var(--silver-400)] block">S</span><span id="sch-sat" class="font-bold">PLL</span></div>
+        <div><span class="text-[var(--silver-400)] block">S</span><span id="sch-sun" class="font-bold">RST</span></div>
+      </div>
+
+      <!-- Rest Day Warning Card / Active exercises list -->
+      <div id="workout-exercises-list" class="space-y-3 flex-1">
+        <!-- Render current exercises dynamically based on today's active schedule -->
+      </div>
+
+      <!-- Workout Footer / Track summary state -->
+      <div class="border-t border-[var(--border)] pt-4 mt-6 pb-8">
+        <div class="flex justify-between items-center text-xs font-mono text-[var(--silver-400)] mb-3">
+          <span>PROGRESS PRESERVED DAILY</span>
+          <span id="workout-comp-stats">0/5 COMPLETE</span>
+        </div>
+        <button id="complete-workout-session" class="w-full text-center py-3 bg-[var(--silver-200)] hover:bg-[var(--silver-100)] text-[#08090b] font-bebas text-lg tracking-wider rounded transition-all max-h-[46px] flex items-center justify-center">
+          LOG COMPLETED TRAINING
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ============================================= -->
+  <!-- JAVASCRIPT APP LOGIC & PERSISTENCE ENGINE -->
+  <!-- ============================================= -->
+  <script>
+    // App Configuration & Global States
+    const APP_ID = "soafa-routine-v2";
+    
+    // Default 23 items provided in routine
+    const DEFAULT_ROUTINE = [
+      { id: "task_1", time: "5:30 AM", title: "Wake Up + 500ml Water", category: "morning", emoji: "🌅", description: "Rehydrate with fresh water, dynamic stretching to signal morning alertness.", timestamp: "05:30" },
+      { id: "task_2", time: "5:35 AM", title: "Morning Skincare", category: "morning", emoji: "🧴", description: "Cleanse skin, apply antioxidant defense serums & protection cream.", timestamp: "05:35" },
+      { id: "task_3", time: "5:40 AM", title: "Workout (60 min)", category: "activity", emoji: "🏋️", description: "Kinetic session. Heavy target routine or active structural compound movements.", timestamp: "05:40", isWorkout: true },
+      { id: "task_4", time: "6:40 AM", title: "Shower + Grooming", category: "morning", emoji: "🚿", description: "Hot-cold therapeutic contrast therapy, finish styling.", timestamp: "06:40" },
+      { id: "task_5", time: "7:00 AM", title: "Breakfast", category: "food", emoji: "🍳", description: "High-protein compound morning meal + clean carbs fuel.", timestamp: "07:00" },
+      { id: "task_6", time: "7:30 AM", title: "Study Block 1 Deep Focus", category: "study", emoji: "📚", description: "No interruption study flow block. Remove device distraction.", timestamp: "07:30" },
+      { id: "task_7", time: "9:30 AM", title: "Break Walk/Stretch", category: "morning", emoji: "🚶", description: "10-min active posture reset. Zone out visual field.", timestamp: "09:30" },
+      { id: "task_8", time: "9:40 AM", title: "Study Block 2", category: "study", emoji: "📖", description: "Secondary complex intellectual acquisition block.", timestamp: "09:40" },
+      { id: "task_9", time: "11:40 AM", title: "Short Break", category: "morning", emoji: "☕", description: "Caffeine restriction or herbal reload block. Rest eyes.", timestamp: "11:40" },
+      { id: "task_10", time: "12:00 PM", title: "Lunch", category: "food", emoji: "🍚", description: "Nutritious recovery lunch. Slow release fuels.", timestamp: "12:00" },
+      { id: "task_11", time: "12:30 PM", title: "Study Block 3", category: "study", emoji: "📝", description: "Interactive note synthesization, test practices, or deep review.", timestamp: "12:30" },
+      { id: "task_12", time: "2:30 PM", title: "Study Block 4", category: "study", emoji: "🧠", description: "Hard memory review block, high concentration retention drills.", timestamp: "14:30" },
+      { id: "task_13", time: "4:30 PM", title: "Pre-Football Snack", category: "food", emoji: "🍌", description: "Complex clean carbohydrates & quick glycogen energy loader.", timestamp: "16:30" },
+      { id: "task_14", time: "4:45 PM", title: "Football (4:45–6:50 PM)", category: "activity", emoji: "⚽", description: "Live competitive high-intensity activity & sport drill session.", timestamp: "16:45" },
+      { id: "task_15", time: "6:50 PM", title: "Post-Football Wash Up", category: "morning", emoji: "🚿", description: "Fast refresh protocol, skin cleanse, dry dynamic layer gear.", timestamp: "18:50" },
+      { id: "task_16", time: "7:00 PM", title: "Momentum / Skill Work", category: "study", emoji: "💻", description: "Exploratory technical programming skill builder, project mechanics.", timestamp: "19:00" },
+      { id: "task_17", time: "7:00 PM", title: "Dinner", category: "food", emoji: "🍽️", description: "Dense evening recovery macronutrients plate.", timestamp: "19:00" },
+      { id: "task_18", time: "7:30 PM", title: "Light Revision", category: "study", emoji: "🔄", description: "Passive synthesis review. Prepare tools & references for morning.", timestamp: "19:30" },
+      { id: "task_19", time: "8:30 PM", title: "No Screens Wind Down", category: "wind", emoji: "📵", description: "Digital lock: no notifications, dim environment lighting, blue light cut.", timestamp: "20:30" },
+      { id: "task_20", time: "9:00 PM", title: "Night Skincare", category: "wind", emoji: "🧴", description: "Deep night face hydration, clean debris, prepare overnight healing.", timestamp: "21:00" },
+      { id: "task_21", time: "9:15 PM", title: "Plan Tomorrow", category: "wind", emoji: "📋", description: "Log today's parameters, optimize agenda, commit mental goals.", timestamp: "21:15" },
+      { id: "task_22", time: "9:30 PM", title: "In Bed No Phone", category: "sleep", emoji: "🛏️", description: "Horizontal sleep onset cycle start. Calm nervous systems.", timestamp: "21:30" },
+      { id: "task_23", time: "10:00 PM", title: "Lights Out", category: "sleep", emoji: "💤", description: "Anabolic deep sleep window. Total dark blackout.", timestamp: "22:00" }
+    ];
+
+    const WORKOUTS = {
+      MON: { name: "PUSH DAY", type: "PUSH", exercises: [
+        { name: "Push-Ups", params: "4 × 12–15 reps", tip: "Focus on slow eccentrics and keeping elbows angled at 45 degrees." },
+        { name: "Pike Push-Ups", params: "3 × 10 reps", tip: "Keep hips elevated to shift load strictly onto shoulders." },
+        { name: "Tricep Dips", params: "3 × 12 reps", tip: "Maintain vertical body position to isolate triceps." },
+        { name: "Lateral Raises", params: "3 × 12 reps", tip: "Leaning slightly forward, lift with elbows to maximize side delts." },
+        { name: "Plank Hold", params: "3 × 45 sec", tip: "Maintain rigid straight body. Squeeze glutes and core." }
+      ]},
+      TUE: { name: "PULL DAY", type: "PULL", exercises: [
+        { name: "Pull-Ups / Aussie Rows", params: "4 × 8–10 reps", tip: "Pull chest high, engage lats first, squeeze shoulders back." },
+        { name: "Band Rows", params: "3 × 12 reps", tip: "Slow dynamic release, pull deep into lower ribs." },
+        { name: "Bicep Curls", params: "3 × 12 reps", tip: "Supinate wrists on contraction and do not swing hips." },
+        { name: "Face Pulls", params: "3 × 15 reps", tip: "Pull towards ears and squeeze rear delts with high elbows." },
+        { name: "Dead Hangs", params: "3 × 30 sec", tip: "Passive hang to stretch spinal column, focus on deep grip force." }
+      ]},
+      WED: { name: "LEGS & CORE", type: "LEGS+CORE", exercises: [
+        { name: "Squats", params: "4 × 15 reps", tip: "Drive force straight through midfoot. Lower below parallel." },
+        { name: "Lunges", params: "3 × 12 reps each", tip: "Ensure correct balance. Knee must track straight with second toe." },
+        { name: "Glute Bridges", params: "3 × 15 reps", tip: "Contract glutes forcefully at extension, hold for 1s." },
+        { name: "Calf Raises", params: "4 × 20 reps", tip: "Hold deep stretch at base, fully explode onto toes." },
+        { name: "Leg Raises", params: "3 × 12 reps", tip: "Do not arch spine. Lift using lower abdominal contraction." },
+        { name: "Bicycle Crunches", params: "3 × 20 reps", tip: "Keep shoulder blades elevated, twist fully from the core." }
+      ]},
+      THU: { name: "REST DAY", type: "REST", exercises: [] },
+      FRI: { name: "PUSH DAY", type: "PUSH", exercises: [
+        { name: "Push-Ups", params: "4 × 12–15 reps", tip: "Focus on slow eccentrics and keeping elbows angled at 45 degrees." },
+        { name: "Pike Push-Ups", params: "3 × 10 reps", tip: "Keep hips elevated to shift load strictly onto shoulders." },
+        { name: "Tricep Dips", params: "3 × 12 reps", tip: "Maintain vertical body position to isolate triceps." },
+        { name: "Lateral Raises", params: "3 × 12 reps", tip: "Leaning slightly forward, lift with elbows to maximize side delts." },
+        { name: "Plank Hold", params: "3 × 45 sec", tip: "Maintain rigid straight body. Squeeze glutes and core." }
+      ]},
+      SAT: { name: "PULL DAY", type: "PULL", exercises: [
+        { name: "Pull-Ups / Aussie Rows", params: "4 × 8–10 reps", tip: "Pull chest high, engage lats first, squeeze shoulders back." },
+        { name: "Band Rows", params: "3 × 12 reps", tip: "Slow dynamic release, pull deep into lower ribs." },
+        { name: "Bicep Curls", params: "3 × 12 reps", tip: "Supinate wrists on contraction and do not swing hips." },
+        { name: "Face Pulls", params: "3 × 15 reps", tip: "Pull towards ears and squeeze rear delts with high elbows." },
+        { name: "Dead Hangs", params: "3 × 30 sec", tip: "Passive hang to stretch spinal column, focus on deep grip force." }
+      ]},
+      SUN: { name: "REST DAY", type: "REST", exercises: [] }
+    };
+
+    const DEFAULT_HABITS = [
+      "No Screen/Phone in Bed First 30 Min",
+      "No Fast-food Consumption Today",
+      "No Unscheduled Video Bingeing",
+      "No Skipping Water Protocols"
+    ];
+
+    // =============================================
+    // STATE ENGINE (Persistent Client Database)
+    // =============================================
+    class DataEngine {
+      static getFormattedDate(date = new Date()) {
+        const d = new Date(date);
+        let month = '' + (d.getMonth() + 1);
+        let day = '' + d.getDate();
+        const year = d.getFullYear();
+
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+
+        return [year, month, day].join('-');
+      }
+
+      static getTodayString() {
+        return this.getFormattedDate(new Date());
+      }
+
+      static loadConfig() {
+        let config = localStorage.getItem(`${APP_ID}_config`);
+        if (!config) {
+          config = {
+            tasks: DEFAULT_ROUTINE,
+            bad_habits: DEFAULT_HABITS
+          };
+          this.saveConfig(config);
+        } else {
+          config = JSON.parse(config);
+        }
+        return config;
+      }
+
+      static saveConfig(config) {
+        localStorage.setItem(`${APP_ID}_config`, JSON.stringify(config));
+      }
+
+      static loadDailyState(dateStr) {
+        let raw = localStorage.getItem(`${APP_ID}_state_${dateStr}`);
+        if (!raw) {
+          // Initialize default structure
+          raw = JSON.stringify({
+            completed_tasks: [], // list of task IDs done
+            avoided_habits: [], // list of bad habits avoided
+            workout_completed: false, // overall workout state
+            workout_checks: [], // specific checked exercises (indexes/names)
+          });
+          localStorage.setItem(`${APP_ID}_state_${dateStr}`, raw);
+        }
+        return JSON.parse(raw);
+      }
+
+      static saveDailyState(dateStr, state) {
+        localStorage.setItem(`${APP_ID}_state_${dateStr}`, JSON.stringify(state));
+      }
+
+      static getHistory(daysBack = 30) {
+        const history = {};
+        for (let i = 0; i < daysBack; i++) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          const dateStr = this.getFormattedDate(d);
+          const state = localStorage.getItem(`${APP_ID}_state_${dateStr}`);
+          if (state) {
+            history[dateStr] = JSON.parse(state);
+          } else {
+            // Unrecorded counts as zero progress, initialize empty for compliance
+            history[dateStr] = { completed_tasks: [], avoided_habits: [], workout_completed: false, workout_checks: [] };
+          }
+        }
+        return history;
+      }
+    }
+
+    // =============================================
+    // CONTROLLER & UI APPLICATION BINDINGS
+    // =============================================
+    class AppController {
+      constructor() {
+        this.currentDateStr = DataEngine.getTodayString();
+        this.config = DataEngine.loadConfig();
+        this.todayState = DataEngine.loadDailyState(this.currentDateStr);
+        this.currentTab = 'routine';
+        this.editMode = false;
+        
+        // Setup Date info from the current date context
+        this.dayOfWeekIndex = new Date().getDay(); // 0 is Sun, 1 is Mon etc.
+        this.dayOfWeekStr = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"][this.dayOfWeekIndex];
+
+        this.initDOM();
+        this.bindEvents();
+        this.renderAll();
+        this.setupAutoScroll();
+        this.scheduleLiveTimeCounter();
+      }
+
+      initDOM() {
+        this.routineListContainer = document.getElementById('routine-list-container');
+        this.badHabitsContainer = document.getElementById('bad-habits-container');
+        this.progressText = document.getElementById('live-progress-text');
+        this.progressFill = document.getElementById('live-progress-fill');
+        this.editModeBtn = document.getElementById('edit-mode-btn');
+        this.headerDayName = document.getElementById('header-day-name');
+        this.headerFullDate = document.getElementById('header-full-date');
+        this.currentTimeLog = document.getElementById('current-time-log');
+
+        // Navigation elements
+        this.navBtnRoutine = document.getElementById('nav-btn-routine');
+        this.navBtnStats = document.getElementById('nav-btn-stats');
+        this.navIndRoutine = document.getElementById('nav-indicator-routine');
+        this.navIndStats = document.getElementById('nav-indicator-stats');
+        this.tabRoutine = document.getElementById('tab-routine');
+        this.tabStats = document.getElementById('tab-stats');
+
+        // Modal elements
+        this.workoutModal = document.getElementById('workout-modal');
+        this.workoutModalTitle = document.getElementById('workout-modal-title');
+        this.workoutExercisesList = document.getElementById('workout-exercises-list');
+        this.workoutCompStatsText = document.getElementById('workout-comp-stats');
+        this.btnLogWorkout = document.getElementById('complete-workout-session');
+        this.btnCloseWorkout = document.getElementById('close-workout-btn');
+
+        // Habit UI
+        this.addHabitForm = document.getElementById('add-habit-form');
+        this.newHabitInput = document.getElementById('new-habit-input');
+        this.avoidedHabitsScore = document.getElementById('avoided-habits-score');
+
+        // Stat widgets
+        this.statStreakVal = document.getElementById('stats-streak-val');
+        this.statBestStreak = document.getElementById('stats-best-streak');
+        this.statTodayPercentage = document.getElementById('stats-today-percentage');
+        this.statCompleteCount = document.getElementById('stats-complete-count');
+        this.statWorkoutCount = document.getElementById('stats-workout-count');
+        this.streakWeekChips = document.getElementById('streak-week-chips');
+
+        // Animation Overlays
+        this.achievementOverlay = document.getElementById('achievement-overlay');
+        this.achievementBox = document.getElementById('achievement-box');
+      }
+
+      bindEvents() {
+        // Tab switching
+        this.navBtnRoutine.addEventListener('click', () => this.switchTab('routine'));
+        this.navBtnStats.addEventListener('click', () => this.switchTab('stats'));
+
+        // Toggle Edit Mode
+        this.editModeBtn.addEventListener('click', () => this.toggleEditMode());
+
+        // Modal Actions
+        this.btnCloseWorkout.addEventListener('click', () => this.closeWorkoutModal());
+        this.btnLogWorkout.addEventListener('click', () => this.logWorkoutSession());
+
+        // Bad Habit Form Submission
+        this.addHabitForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          this.addNewBadHabit();
+        });
+
+        // Outside-modal clicks or ESC key
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && !this.workoutModal.classList.contains('hidden')) {
+            this.closeWorkoutModal();
+          }
+        });
+      }
+
+      switchTab(tabName) {
+        this.currentTab = tabName;
+        if (tabName === 'routine') {
+          this.tabRoutine.classList.add('active');
+          this.tabStats.classList.remove('active');
+          
+          this.navIndRoutine.classList.replace('w-0', 'w-8');
+          this.navIndStats.classList.replace('w-8', 'w-0');
+          this.navBtnRoutine.querySelector('span').classList.replace('text-[var(--silver-400)]', 'text-[var(--silver-200)]');
+          this.navBtnStats.querySelector('span').classList.replace('text-[var(--silver-200)]', 'text-[var(--silver-400)]');
+        } else {
+          this.tabRoutine.classList.remove('active');
+          this.tabStats.classList.add('active');
+
+          this.navIndRoutine.classList.replace('w-8', 'w-0');
+          this.navIndStats.classList.replace('w-0', 'w-8');
+          this.navBtnRoutine.querySelector('span').classList.replace('text-[var(--silver-200)]', 'text-[var(--silver-400)]');
+          this.navBtnStats.querySelector('span').classList.replace('text-[var(--silver-400)]', 'text-[var(--silver-200)]');
+          
+          // Re-render stats matrix dynamically
+          this.calculateAndRenderStats();
+        }
+      }
+
+      scheduleLiveTimeCounter() {
+        const updateTick = () => {
+          const now = new Date();
+          let hour = now.getHours();
+          const min = String(now.getMinutes()).padStart(2, '0');
+          const ampm = hour >= 12 ? 'PM' : 'AM';
+          hour = hour % 12;
+          hour = hour ? hour : 12; // correct 0 to 12
+          
+          this.currentTimeLog.textContent = `SYSTEM LOG: ${hour}:${min} ${ampm}`;
+          this.updateActiveTaskIndicator();
+        };
+        updateTick();
+        setInterval(updateTick, 60000); // dynamic checks every 1 min
+      }
+
+      toggleEditMode() {
+        this.editMode = !this.editMode;
+        if (this.editMode) {
+          this.editModeBtn.classList.add('bg-[var(--silver-400)]', 'text-black');
+          this.editModeBtn.innerHTML = `
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          `;
+        } else {
+          this.editModeBtn.classList.remove('bg-[var(--silver-400)]', 'text-black');
+          this.editModeBtn.innerHTML = `
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+          `;
+          this.saveGlobalEdits();
+        }
+        this.renderRoutineList();
+      }
+
+      saveGlobalEdits() {
+        // Collect edited configurations from HTML input fields
+        const inputs = this.routineListContainer.querySelectorAll('.edit-input-field');
+        inputs.forEach(input => {
+          const taskId = input.dataset.taskId;
+          const field = input.dataset.field;
+          const value = input.value.trim();
+
+          const task = this.config.tasks.find(t => t.id === taskId);
+          if (task && value) {
+            task[field] = value;
+          }
+        });
+
+        // Save back to client configuration
+        DataEngine.saveConfig(this.config);
+        this.renderRoutineList();
+        this.updateOverallProgress();
+      }
+
+      updateOverallProgress() {
+        const totalTasks = this.config.tasks.length;
+        const doneCount = this.todayState.completed_tasks.length;
+        const pct = totalTasks > 0 ? Math.round((doneCount / totalTasks) * 100) : 0;
+
+        this.progressText.textContent = `${doneCount}/${totalTasks} SECURED (${pct}%)`;
+        this.progressFill.style.width = `${pct}%`;
+
+        // Completion celebration triggers exactly once at 100% threshold
+        if (pct === 100 && !this.todayState.celebrated) {
+          this.triggerCompletionSplash();
+          this.todayState.celebrated = true;
+          DataEngine.saveDailyState(this.currentDateStr, this.todayState);
+        } else if (pct < 100) {
+          // Allow re-trigger if check counts change
+          this.todayState.celebrated = false;
+          DataEngine.saveDailyState(this.currentDateStr, this.todayState);
+        }
+      }
+
+      triggerCompletionSplash() {
+        this.achievementOverlay.classList.remove('pointer-events-none');
+        this.achievementOverlay.classList.add('opacity-100');
+        this.achievementBox.classList.remove('scale-75');
+        this.achievementBox.classList.add('scale-100');
+
+        setTimeout(() => {
+          this.achievementOverlay.classList.add('opacity-0');
+          this.achievementOverlay.classList.remove('opacity-100');
+          this.achievementBox.classList.replace('scale-100', 'scale-75');
+          this.achievementOverlay.classList.add('pointer-events-none');
+        }, 4000);
+      }
+
+      // Finds the closest earlier task to mark active
+      updateActiveTaskIndicator() {
+        const now = new Date();
+        const curMinutes = now.getHours() * 60 + now.getMinutes();
+
+        let activeIndex = -1;
+        let minDiff = Infinity;
+
+        this.config.tasks.forEach((task, idx) => {
+          const [hStr, mStr] = task.timestamp.split(':');
+          const taskMinutes = parseInt(hStr) * 60 + parseInt(mStr);
+
+          // Task active state threshold logic (within task range or nearest past task)
+          if (curMinutes >= taskMinutes) {
+            const diff = curMinutes - taskMinutes;
+            if (diff < minDiff) {
+              minDiff = diff;
+              activeIndex = idx;
+            }
+          }
+        });
+
+        const cards = this.routineListContainer.querySelectorAll('[data-task-card-id]');
+        const dots = this.routineListContainer.querySelectorAll('[data-task-dot-id]');
+
+        cards.forEach((card, idx) => {
+          const cardId = card.getAttribute('data-task-card-id');
+          const isTaskDone = this.todayState.completed_tasks.includes(cardId);
+          const dot = Array.from(dots).find(d => d.getAttribute('data-task-dot-id') === cardId);
+
+          if (idx === activeIndex) {
+            card.classList.add('task-active');
+            if (dot) {
+              dot.className = "absolute -left-[24px] top-4 w-[9px] h-[9px] rounded-full border-2 border-[#fff] bg-[var(--silver-200)] shadow-[0_0_8px_#fff]";
+            }
+          } else {
+            card.classList.remove('task-active');
+            if (dot) {
+              if (isTaskDone) {
+                dot.className = "absolute -left-[23px] top-[18px] w-1.5 h-1.5 rounded-full bg-[var(--silver-500)]";
+              } else {
+                dot.className = "absolute -left-[23px] top-[18px] w-1.5 h-1.5 rounded-full bg-[var(--border2)] border border-[var(--border)]";
+              }
+            }
+          }
+        });
+      }
+
+      setupAutoScroll() {
+        // Initial delayed trigger to let HTML mount correctly
+        setTimeout(() => {
+          const activeCard = this.routineListContainer.querySelector('.task-active');
+          if (activeCard) {
+            activeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 500);
+
+        // Periodically verify viewport positioning
+        setInterval(() => {
+          const activeCard = this.routineListContainer.querySelector('.task-active');
+          if (activeCard && this.currentTab === 'routine' && !this.editMode) {
+            activeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 60000 * 5); // Every 5 minutes
+      }
+
+      toggleTaskCheck(taskId, element) {
+        if (this.editMode) return;
+
+        const index = this.todayState.completed_tasks.indexOf(taskId);
+        const isChecked = index > -1;
+
+        if (isChecked) {
+          this.todayState.completed_tasks.splice(index, 1);
+          element.classList.remove('checked');
+          element.closest('.card').querySelector('.task-title-line').classList.remove('line-through', 'opacity-40');
+        } else {
+          this.todayState.completed_tasks.push(taskId);
+          element.classList.add('checked');
+          element.closest('.card').querySelector('.task-title-line').classList.add('line-through', 'opacity-40');
+        }
+
+        // Save down state
+        DataEngine.saveDailyState(this.currentDateStr, this.todayState);
+        this.updateOverallProgress();
+        this.updateActiveTaskIndicator();
+      }
+
+      toggleDescription(cardElement) {
+        if (this.editMode) return;
+        const descPanel = cardElement.querySelector('.desc-panel');
+        if (descPanel.classList.contains('hidden')) {
+          descPanel.classList.remove('hidden');
+        } else {
+          descPanel.classList.add('hidden');
+        }
+      }
+
+      // =============================================
+      // RENDERING MODULES
+      // =============================================
+      renderAll() {
+        // Render current dates
+        const days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+        this.headerDayName.textContent = days[new Date().getDay()];
+        
+        const now = new Date();
+        const dateString = `${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`;
+        this.headerFullDate.textContent = dateString;
+
+        this.renderRoutineList();
+        this.renderBadHabits();
+        this.updateOverallProgress();
+      }
+
+      renderRoutineList() {
+        this.routineListContainer.innerHTML = '';
+
+        if (this.config.tasks.length === 0) {
+          this.routineListContainer.innerHTML = `
+            <div class="text-center py-12 text-[var(--silver-400)] font-mono text-xs">
+              // NO SYSTEM PROTOCOLS LOADED
+            </div>
+          `;
+          return;
+        }
+
+        this.config.tasks.forEach(task => {
+          const isDone = this.todayState.completed_tasks.includes(task.id);
+          const wrapper = document.createElement('div');
+          wrapper.className = "relative flex flex-col group";
+
+          // Dynamic colors by category mapping
+          let borderStyle = `border-left: 3px solid var(--cat-${task.category});`;
+
+          // Standard non-edit vs edit mode render
+          if (!this.editMode) {
+            wrapper.innerHTML = `
+              <!-- Timeline Connect dot -->
+              <div data-task-dot-id="${task.id}" class="absolute -left-[23px] top-[18px] w-1.5 h-1.5 rounded-full bg-[var(--border2)] border border-[var(--border)] transition-all"></div>
+              
+              <!-- Compact Card Interface -->
+              <div data-task-card-id="${task.id}" class="card flex flex-col p-[11px_14px] cursor-pointer" style="${borderStyle}">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-3 flex-1 min-w-0" onclick="app.toggleDescription(this.closest('.card'))">
+                    <span class="text-base select-none">${task.emoji || '⚡'}</span>
+                    <div class="flex flex-col min-w-0">
+                      <span class="task-title-line font-syne font-semibold text-[13px] text-[var(--silver-200)] tracking-wide truncate ${isDone ? 'line-through opacity-40' : ''}">
+                        ${task.title}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-3">
+                    ${task.isWorkout ? `
+                      <button onclick="app.openWorkoutModal(event)" class="flex items-center justify-center p-1.5 rounded bg-[var(--border2)] border border-[var(--border)] text-[var(--silver-200)] hover:text-white transition-all scale-100 active:scale-95" title="Access training module">
+                        <span class="text-xs font-mono mr-1">TRAIN</span>
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M15.5 5.5c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5.67 1.5 1.5 1.5 1.5-.67 1.5-1.5zm-3.5 3c-1.1 0-2 .9-2 2v3.5c0 .83.67 1.5 1.5 1.5h1v4.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-5h1c.83 0 1.5-.67 1.5-1.5V10.5c0-1.1-.9-2-2-2h-3zM4 12c0-4.42 3.58-8 8-8s8 3.58 8 8-3.58 8-8 8-8-3.58-8-8z"/></svg>
+                      </button>
+                    ` : ''}
+                    <span class="font-mono text-[10px] text-[var(--silver-300)] whitespace-nowrap">${task.time}</span>
+                    <div class="custom-checkbox ${isDone ? 'checked' : ''}" onclick="app.toggleTaskCheck('${task.id}', this)"></div>
+                  </div>
+                </div>
+
+                <!-- Hidden Inline Description Panel -->
+                <div class="desc-panel hidden mt-2 pt-2 border-t border-[var(--border2)]/50">
+                  <p class="font-mono text-[10px] text-[var(--silver-300)] leading-relaxed italic">// ${task.description || 'No routine breakdown protocols configured.'}</p>
+                  <div class="flex gap-2 mt-2">
+                    <span class="font-mono text-[8px] bg-[var(--border2)] text-[var(--silver-400)] px-1.5 py-0.5 rounded tracking-widest uppercase">CAT: ${task.category}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          } else {
+            // EDIT MODE RENDER INLINE
+            wrapper.innerHTML = `
+              <div class="card p-3 space-y-2 border-dashed border-[var(--silver-400)]" style="${borderStyle}">
+                <div class="grid grid-cols-12 gap-2">
+                  <input type="text" data-task-id="${task.id}" data-field="emoji" value="${task.emoji || ''}" class="edit-input-field col-span-2 bg-[#0d0f12] border border-[var(--border)] rounded px-1 text-center font-mono text-xs text-[var(--silver-100)]" placeholder="Emoji">
+                  <input type="text" data-task-id="${task.id}" data-field="title" value="${task.title}" class="edit-input-field col-span-7 bg-[#0d0f12] border border-[var(--border)] rounded px-2 py-1 font-syne text-xs text-[var(--silver-100)]" placeholder="Task Name">
+                  <input type="text" data-task-id="${task.id}" data-field="time" value="${task.time}" class="edit-input-field col-span-3 bg-[#0d0f12] border border-[var(--border)] rounded px-1 py-1 font-mono text-[10px] text-[var(--silver-100)]" placeholder="Time">
+                </div>
+                <div class="grid grid-cols-12 gap-2">
+                  <input type="text" data-task-id="${task.id}" data-field="description" value="${task.description || ''}" class="edit-input-field col-span-9 bg-[#0d0f12] border border-[var(--border)] rounded px-2 py-1 font-mono text-[10px] text-[var(--silver-200)]" placeholder="Description/Protocols">
+                  <select data-task-id="${task.id}" data-field="category" class="edit-input-field col-span-3 bg-[#0d0f12] border border-[var(--border)] rounded text-[9px] text-[var(--silver-100)] font-mono">
+                    <option value="morning" ${task.category === 'morning' ? 'selected' : ''}>morning</option>
+                    <option value="study" ${task.category === 'study' ? 'selected' : ''}>study</option>
+                    <option value="food" ${task.category === 'food' ? 'selected' : ''}>food</option>
+                    <option value="activity" ${task.category === 'activity' ? 'selected' : ''}>activity</option>
+                    <option value="wind" ${task.category === 'wind' ? 'selected' : ''}>wind</option>
+                    <option value="sleep" ${task.category === 'sleep' ? 'selected' : ''}>sleep</option>
+                  </select>
+                </div>
+              </div>
+            `;
+          }
+
+          this.routineListContainer.appendChild(wrapper);
+        });
+
+        this.updateActiveTaskIndicator();
+      }
+
+      renderBadHabits() {
+        this.badHabitsContainer.innerHTML = '';
+        const habits = this.config.bad_habits;
+
+        if (habits.length === 0) {
+          this.badHabitsContainer.innerHTML = `
+            <div class="text-center py-6 text-[var(--silver-400)] font-mono text-xs italic">
+              // no bad habits tracked yet
+            </div>
+          `;
+          this.avoidedHabitsScore.textContent = "SCORE: 0/0 SHIELDED";
+          return;
+        }
+
+        let avoidedCount = 0;
+        habits.forEach((habit, idx) => {
+          const isShielded = this.todayState.avoided_habits.includes(habit);
+          if (isShielded) avoidedCount++;
+
+          const card = document.createElement('div');
+          card.className = "card p-3 flex items-center justify-between gap-3";
+          card.innerHTML = `
+            <div class="flex items-center gap-3 flex-1 min-w-0">
+              <div class="custom-checkbox ${isShielded ? 'checked' : ''}" onclick="app.toggleHabitShield('${habit}', this)"></div>
+              <span class="font-mono text-xs text-[var(--silver-200)] truncate ${isShielded ? 'line-through opacity-40' : ''}">${habit}</span>
+            </div>
+            <button onclick="app.deleteBadHabit('${habit}')" class="p-1 rounded text-[var(--silver-400)] hover:text-[#c94040] hover:bg-[var(--border2)] transition-all">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+          `;
+          this.badHabitsContainer.appendChild(card);
+        });
+
+        this.avoidedHabitsScore.textContent = `SCORE: ${avoidedCount}/${habits.length} SHIELDED`;
+      }
+
+      toggleHabitShield(habitName, element) {
+        const index = this.todayState.avoided_habits.indexOf(habitName);
+        if (index > -1) {
+          this.todayState.avoided_habits.splice(index, 1);
+          element.classList.remove('checked');
+        } else {
+          this.todayState.avoided_habits.push(habitName);
+          element.classList.add('checked');
+        }
+
+        DataEngine.saveDailyState(this.currentDateStr, this.todayState);
+        this.renderBadHabits();
+        this.calculateAndRenderStats();
+      }
+
+      addNewBadHabit() {
+        const val = this.newHabitInput.value.trim();
+        if (!val) return;
+
+        if (!this.config.bad_habits.includes(val)) {
+          this.config.bad_habits.push(val);
+          DataEngine.saveConfig(this.config);
+          this.newHabitInput.value = '';
+          this.renderBadHabits();
+          this.calculateAndRenderStats();
+        }
+      }
+
+      deleteBadHabit(habitName) {
+        const index = this.config.bad_habits.indexOf(habitName);
+        if (index > -1) {
+          this.config.bad_habits.splice(index, 1);
+          DataEngine.saveConfig(this.config);
+          
+          // Clean dynamic state if stored
+          const sIndex = this.todayState.avoided_habits.indexOf(habitName);
+          if (sIndex > -1) {
+            this.todayState.avoided_habits.splice(sIndex, 1);
+            DataEngine.saveDailyState(this.currentDateStr, this.todayState);
+          }
+
+          this.renderBadHabits();
+          this.calculateAndRenderStats();
+        }
+      }
+
+      // =============================================
+      // WORKOUT LOGIC MODULE
+      // =============================================
+      getWorkoutDayKey() {
+        const daysShort = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+        return daysShort[new Date().getDay()];
+      }
+
+      openWorkoutModal(event) {
+        if (event) event.stopPropagation();
+
+        // 1. Detect schedule target
+        const dayKey = this.getWorkoutDayKey();
+        const workout = WORKOUTS[dayKey];
+
+        // Highlight Schedule bar based on current day
+        const schKeys = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+        schKeys.forEach(k => {
+          const el = document.getElementById(`sch-${k.toLowerCase()}`);
+          if (el) {
+            if (k === dayKey) {
+              el.className = "font-bold text-[var(--silver-200)] underline decoration-2";
+            } else {
+              el.className = "text-[var(--silver-400)]";
+            }
+          }
+        });
+
+        this.workoutModalTitle.textContent = `${workout.name}`;
+        this.renderWorkoutExercises(workout);
+
+        // Open animation transitions
+        this.workoutModal.classList.remove('hidden');
+        this.workoutModal.classList.add('flex');
+        
+        // Brief scan-line overlay trigger
+        const element = this.workoutModal.querySelector('.scanline-container');
+        element.classList.add('scanline-pulse');
+        setTimeout(() => {
+          element.classList.remove('scanline-pulse');
+        }, 3000);
+      }
+
+      closeWorkoutModal() {
+        this.workoutModal.classList.add('hidden');
+        this.workoutModal.classList.remove('flex');
+      }
+
+      renderWorkoutExercises(workout) {
+        this.workoutExercisesList.innerHTML = '';
+
+        if (workout.type === 'REST') {
+          this.workoutExercisesList.innerHTML = `
+            <div class="card p-5 text-center space-y-3">
+              <span class="text-3xl">🔋</span>
+              <h3 class="font-bebas text-2xl text-[var(--silver-200)] tracking-wide">REST DAY ACTIVATED</h3>
+              <p class="font-mono text-[10px] text-[var(--silver-400)] leading-relaxed">
+                No structured resistance loading scheduled. Focus strictly on active mobility patterns and dynamic Recovery. Football matches constitute elite cardio routines.
+              </p>
+            </div>
+          `;
+          this.workoutCompStatsText.textContent = "REST ACTIVE";
+          this.btnLogWorkout.classList.add('opacity-50', 'pointer-events-none');
+          this.btnLogWorkout.textContent = "REST LOGGED";
+          return;
+        }
+
+        this.btnLogWorkout.classList.remove('opacity-50', 'pointer-events-none');
+        this.btnLogWorkout.textContent = this.todayState.workout_completed ? "LOGS COMPLETED" : "LOG COMPLETED TRAINING";
+
+        let completedChecksCount = 0;
+        workout.exercises.forEach((ex, idx) => {
+          const isExDone = this.todayState.workout_checks.includes(ex.name);
+          if (isExDone) completedChecksCount++;
+
+          const wrapper = document.createElement('div');
+          wrapper.className = "card p-3 cursor-pointer flex flex-col gap-2";
+          wrapper.innerHTML = `
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3 flex-1 min-w-0" onclick="app.toggleWorkoutTip(this.closest('.card'))">
+                <span class="font-mono text-xs text-[var(--silver-400)]">0${idx+1}</span>
+                <div class="flex flex-col min-w-0">
+                  <span class="font-syne font-semibold text-xs text-[var(--silver-100)] truncate ${isExDone ? 'line-through opacity-40' : ''}">${ex.name}</span>
+                  <span class="font-mono text-[9px] text-[var(--silver-300)]">${ex.params}</span>
+                </div>
+              </div>
+              <div class="custom-checkbox ${isExDone ? 'checked' : ''}" onclick="app.toggleExerciseCheck('${ex.name}', this)"></div>
+            </div>
+            
+            <!-- Tip panel -->
+            <div class="tip-panel hidden mt-2 pt-2 border-t border-[var(--border2)]/50">
+              <p class="font-mono text-[9px] text-[var(--silver-400)] leading-relaxed italic">// TIP: ${ex.tip}</p>
+            </div>
+          `;
+
+          this.workoutExercisesList.appendChild(wrapper);
+        });
+
+        this.workoutCompStatsText.textContent = `${completedChecksCount}/${workout.exercises.length} COMPLETE`;
+      }
+
+      toggleWorkoutTip(card) {
+        const panel = card.querySelector('.tip-panel');
+        if (panel.classList.contains('hidden')) {
+          panel.classList.remove('hidden');
+        } else {
+          panel.classList.add('hidden');
+        }
+      }
+
+      toggleExerciseCheck(exerciseName, checkboxElement) {
+        const index = this.todayState.workout_checks.indexOf(exerciseName);
+        if (index > -1) {
+          this.todayState.workout_checks.splice(index, 1);
+          checkboxElement.classList.remove('checked');
+        } else {
+          this.todayState.workout_checks.push(exerciseName);
+          checkboxElement.classList.add('checked');
+        }
+
+        DataEngine.saveDailyState(this.currentDateStr, this.todayState);
+        
+        // Re-count
+        const dayKey = this.getWorkoutDayKey();
+        const workout = WORKOUTS[dayKey];
+        const completedChecksCount = this.todayState.workout_checks.filter(name => 
+          workout.exercises.some(ex => ex.name === name)
+        ).length;
+
+        this.workoutCompStatsText.textContent = `${completedChecksCount}/${workout.exercises.length} COMPLETE`;
+      }
+
+      logWorkoutSession() {
+        this.todayState.workout_completed = true;
+        DataEngine.saveDailyState(this.currentDateStr, this.todayState);
+        
+        // Check workout item on daily list automatically
+        const wTask = this.config.tasks.find(t => t.isWorkout);
+        if (wTask && !this.todayState.completed_tasks.includes(wTask.id)) {
+          this.todayState.completed_tasks.push(wTask.id);
+          DataEngine.saveDailyState(this.currentDateStr, this.todayState);
+          this.renderRoutineList();
+          this.updateOverallProgress();
+        }
+
+        this.closeWorkoutModal();
+        this.calculateAndRenderStats();
+      }
+
+      // =============================================
+      // METRIC CALCULATOR ENGINE
+      // =============================================
+      calculateAndRenderStats() {
+        const history = DataEngine.getHistory(30);
+        const totalPossibleTasks = this.config.tasks.length;
+        
+        // Compute current Streak
+        let currentStreak = 0;
+        let dayOffset = 0;
+        let activeStreakCounter = true;
+
+        while (activeStreakCounter) {
+          const d = new Date();
+          d.setDate(d.getDate() - dayOffset);
+          const dateStr = DataEngine.getFormattedDate(d);
+          const dayState = history[dateStr];
+
+          if (dayState) {
+            const completedLen = dayState.completed_tasks ? dayState.completed_tasks.length : 0;
+            const percentage = totalPossibleTasks > 0 ? (completedLen / totalPossibleTasks) : 0;
+            
+            if (percentage >= 0.8) {
+              currentStreak++;
+            } else {
+              // Streak breaks if lookback is not today
+              if (dayOffset > 0) {
+                activeStreakCounter = false;
+              } else {
+                // If today is incomplete, streak doesn't break yet if yesterday is active
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                const yesStr = DataEngine.getFormattedDate(yesterday);
+                const yesState = history[yesStr];
+                const yesComp = yesState ? yesState.completed_tasks.length : 0;
+                if ((yesComp / totalPossibleTasks) < 0.8) {
+                  activeStreakCounter = false;
+                }
+              }
+            }
+          } else {
+            activeStreakCounter = false;
+          }
+          dayOffset++;
+          if (dayOffset > 30) activeStreakCounter = false; // hard stop
+        }
+
+        // Calculate all-time Best Streak
+        let bestStreak = localStorage.getItem(`${APP_ID}_best_streak`) || 0;
+        if (currentStreak > bestStreak) {
+          bestStreak = currentStreak;
+          localStorage.setItem(`${APP_ID}_best_streak`, bestStreak);
+        }
+
+        // Render streak figures with visual spotlights
+        this.statStreakVal.textContent = `${currentStreak} DAY${currentStreak !== 1 ? 'S' : ''}`;
+        this.statBestStreak.textContent = `${bestStreak} DAY${bestStreak !== 1 ? 'S' : ''}`;
+
+        // Today's exact percent completed
+        const todayCount = this.todayState.completed_tasks.length;
+        const todayPct = totalPossibleTasks > 0 ? Math.round((todayCount / totalPossibleTasks) * 100) : 0;
+        this.statTodayPercentage.textContent = `${todayPct}%`;
+        this.statCompleteCount.textContent = `${todayCount}`;
+
+        // Compute workout stats for current calendar week (starting Monday)
+        let weekWorkoutsCount = 0;
+        const currentDayNum = new Date().getDay();
+        const daysToMonday = currentDayNum === 0 ? 6 : currentDayNum - 1;
+        
+        for (let i = 0; i <= daysToMonday; i++) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          const dateStr = DataEngine.getFormattedDate(d);
+          const dayState = history[dateStr];
+          if (dayState && dayState.workout_completed) {
+            weekWorkoutsCount++;
+          }
+        }
+        this.statWorkoutCount.textContent = `${weekWorkoutsCount}`;
+
+        // Render last 7 days visual compliance chips
+        this.streakWeekChips.innerHTML = '';
+        const dayNames = ["S", "M", "T", "W", "T", "F", "S"];
+        
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          const dateStr = DataEngine.getFormattedDate(d);
+          const dayState = history[dateStr];
+          
+          const completedCount = dayState ? dayState.completed_tasks.length : 0;
+          const isCompliant = totalPossibleTasks > 0 && (completedCount / totalPossibleTasks) >= 0.8;
+          const isToday = i === 0;
+
+          const chip = document.createElement('div');
+          chip.className = `flex flex-col items-center justify-between p-2 rounded border transition-all ${
+            isCompliant 
+              ? 'bg-[var(--silver-500)]/30 border-[var(--silver-300)]' 
+              : 'bg-[#0d0f12] border-[var(--border)]'
+          } ${isToday ? 'ring-1 ring-[var(--silver-200)]' : ''}`;
+
+          chip.innerHTML = `
+            <span class="font-mono text-[9px] text-[var(--silver-400)]">${dayNames[d.getDay()]}</span>
+            <span class="font-bebas text-xs mt-1 ${isCompliant ? 'text-[var(--silver-200)]' : 'text-[var(--silver-400)]'}">
+              ${isCompliant ? '✔' : '➖'}
+            </span>
+            <span class="font-mono text-[8px] text-[var(--silver-400)] mt-0.5">${Math.round((completedCount/totalPossibleTasks)*100)}%</span>
+          `;
+          this.streakWeekChips.appendChild(chip);
+        }
+      }
+    }
+
+    // =============================================
+    // INITIALIZATION ON DOCUMENT READY
+    // =============================================
+    let app;
+    window.onload = function() {
+      app = new AppController();
+    }
+  </script>
+</body>
+</html>
